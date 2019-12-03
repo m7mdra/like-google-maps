@@ -16,21 +16,25 @@ package com.fish4fun.likegooglemaps.bottomsheet;
  * limitations under the License.
  */
 
+import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.view.MotionEvent;
-import android.view.VelocityTracker;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.view.ViewCompat;
 import androidx.customview.view.AbsSavedState;
+import androidx.core.view.ViewCompat;
 import androidx.customview.widget.ViewDragHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import android.util.AttributeSet;
+import android.util.TypedValue;
+import android.view.MotionEvent;
+import android.view.VelocityTracker;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 
 import com.fish4fun.likegooglemaps.R;
 import com.fish4fun.likegooglemaps.helpers.MaxHeightRecyclerView;
@@ -107,16 +111,39 @@ public class CustomBottomSheetBehavior<V extends View> extends CoordinatorLayout
     private WeakReference<V> mViewRef;
 
 
+    public CustomBottomSheetBehavior() {
+    }
+
+    public CustomBottomSheetBehavior(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CustomBottomSheetBehavior);
+        TypedValue value = a.peekValue(R.styleable.CustomBottomSheetBehavior_cbs_behavior_peekHeight);
+        if (value != null && (value.data == PEEK_HEIGHT_AUTO || value.data == PEEK_HEIGHT_HEADER)) {
+            setPeekHeight(value.data);
+        } else {
+            setPeekHeight(a.getDimensionPixelSize(R.styleable.CustomBottomSheetBehavior_cbs_behavior_peekHeight, PEEK_HEIGHT_AUTO));
+        }
+        setHideable(a.getBoolean(R.styleable.CustomBottomSheetBehavior_cbs_behavior_hideable, false));
+
+        topOffset = a.getDimensionPixelSize(R.styleable.CustomBottomSheetBehavior_cbs_behavior_topOffset,0);
+        snap = a.getBoolean(R.styleable.CustomBottomSheetBehavior_cbs_behavior_snap, false);
+
+        a.recycle();
+        ViewConfiguration configuration = ViewConfiguration.get(context);
+        mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
+    }
+
     @Override
-    public Parcelable onSaveInstanceState(@NonNull CoordinatorLayout parent, @NonNull V child) {
+    public Parcelable onSaveInstanceState(CoordinatorLayout parent, V child) {
         return new CustomBottomSheetBehavior.SavedState(super.onSaveInstanceState(parent, child), mState);
     }
 
     @Override
-    public void onRestoreInstanceState(@NonNull CoordinatorLayout parent, @NonNull V child, @NonNull Parcelable state) {
+    public void onRestoreInstanceState(CoordinatorLayout parent, V child, Parcelable state) {
         SavedState ss = (SavedState) state;
 
-        super.onRestoreInstanceState(parent, child, ss.getSuperState() == null ? state : ss.getSuperState());
+        super.onRestoreInstanceState(parent, child, ss.getSuperState());
+        // Intermediate states are restored as collapsed state
         if (ss.state == STATE_DRAGGING || ss.state == STATE_SETTLING) {
             mState = STATE_COLLAPSED;
         } else {
@@ -131,7 +158,7 @@ public class CustomBottomSheetBehavior<V extends View> extends CoordinatorLayout
     }
 
     @Override
-    public boolean onLayoutChild(@NonNull CoordinatorLayout parent, @NonNull final V child, int layoutDirection) {
+    public boolean onLayoutChild(CoordinatorLayout parent, final V child, int layoutDirection) {
 
         if (ViewCompat.getFitsSystemWindows(parent) && !ViewCompat.getFitsSystemWindows(child)) {
             child.setFitsSystemWindows(true);
@@ -195,7 +222,7 @@ public class CustomBottomSheetBehavior<V extends View> extends CoordinatorLayout
     }
 
     @Override
-    public boolean onInterceptTouchEvent(@NonNull CoordinatorLayout parent, V child, @NonNull MotionEvent event) {
+    public boolean onInterceptTouchEvent(CoordinatorLayout parent, V child, MotionEvent event) {
 
         if (!child.isShown()) {
             return false;
