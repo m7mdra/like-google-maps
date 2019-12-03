@@ -20,13 +20,13 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.view.AbsSavedState;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.ViewDragHelper;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.customview.view.AbsSavedState;
+import androidx.core.view.ViewCompat;
+import androidx.customview.widget.ViewDragHelper;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -110,9 +110,6 @@ public class CustomBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
     private WeakReference<V> mViewRef;
 
-    private View topShadow;
-
-    private View bottomShadow;
 
     public CustomBottomSheetBehavior() {
     }
@@ -169,9 +166,6 @@ public class CustomBottomSheetBehavior<V extends View> extends CoordinatorLayout
 
         //find our header container and inflate header if required
         ViewGroup headerContainer = child.findViewById(R.id.headerContainer);
-        topShadow = child.findViewById(R.id.card_header_shadow_top);
-        bottomShadow = child.findViewById(R.id.card_header_shadow);
-
         int savedTop = child.getTop();
         // First let the parent lay it out
         parent.onLayoutChild(child, layoutDirection);
@@ -186,11 +180,10 @@ public class CustomBottomSheetBehavior<V extends View> extends CoordinatorLayout
         }
 
         //get the height of the shadow for determining our collapsed height
-        int shadowHeight = topShadow.getHeight();
 
         if (getPeekHeight() == PEEK_HEIGHT_HEADER) {
 
-            collapsedHeight = headerContainer.getHeight() + shadowHeight;
+            collapsedHeight = headerContainer.getHeight();
 
         } else if (getPeekHeight() == PEEK_HEIGHT_AUTO) {
 
@@ -205,7 +198,7 @@ public class CustomBottomSheetBehavior<V extends View> extends CoordinatorLayout
         // Give the RecyclerView a maximum height to ensure proper bottom sheet height
         final int rvMaxHeight =
                 child.getHeight()
-                        - shadowHeight
+
                         - headerContainer.getHeight();
 
         MaxHeightRecyclerView rv = child.findViewById(R.id.recyclerView);
@@ -523,16 +516,6 @@ public class CustomBottomSheetBehavior<V extends View> extends CoordinatorLayout
             mCallback.onStateChanged(bottomSheet, state);
         }
 
-        if (mState == STATE_EXPANDED) {
-
-            bottomShadow.animate().alpha(1.0f).setDuration(75);
-            topShadow.animate().alpha(0.0f).setDuration(75);
-
-        } else if (mState == STATE_DRAGGING) {
-
-            bottomShadow.animate().alpha(0.0f).setDuration(75);
-            topShadow.animate().alpha(1.0f).setDuration(75);
-        }
 
     }
 

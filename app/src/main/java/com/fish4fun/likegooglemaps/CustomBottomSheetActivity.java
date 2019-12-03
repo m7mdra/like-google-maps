@@ -1,13 +1,12 @@
 package com.fish4fun.likegooglemaps;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import com.fish4fun.likegooglemaps.bottomsheet.CustomBottomSheetBehavior;
@@ -33,13 +32,7 @@ public class CustomBottomSheetActivity extends AppCompatActivity {
         expandedScrimColor = ContextCompat.getColor(this, R.color.toolbarScrim);
         collapsedScrimColor = ContextCompat.getColor(this, android.R.color.transparent);
 
-        FloatingActionButton floatingActionButton = findViewById(R.id.fab);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bottomSheetBehavior.setState(CustomBottomSheetBehavior.STATE_COLLAPSED);
-            }
-        });
+
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);

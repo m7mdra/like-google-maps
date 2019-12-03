@@ -2,8 +2,8 @@ package com.fish4fun.likegooglemaps.bottomsheet;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.NestedScrollView;
+import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;

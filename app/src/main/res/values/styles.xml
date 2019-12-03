@@ -8,7 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:statusBarColor">@color/statusBarColor</item>
         <item name="android:windowBackground">@color/activityBackground</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+
     </style>
 
 </resources>
